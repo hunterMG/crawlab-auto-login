@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Crawlab 自动登录
 // @namespace    http://tampermonkey.net/
-// @version      0.8.1
+// @version      0.9
 // @description  自动登录 Crawlab
 // @match        http://your-crawlab-address/#/login
 // @grant        GM_getValue
@@ -16,23 +16,26 @@
 (function() {
     'use strict';
 
-    // 获取用户名和密码
-    let username = GM_getValue('crawlab_username', '');
-    let password = GM_getValue('crawlab_password', '');
+    // 获取当前域名
+    const currentDomain = window.location.hostname;
 
-    console.log('Crawlab 自动登录脚本已加载');
+    // 获取用户名和密码
+    let username = GM_getValue(`crawlab_username_${currentDomain}`, '');
+    let password = GM_getValue(`crawlab_password_${currentDomain}`, '');
+
+    console.log(`Crawlab 自动登录脚本已加载 (域名: ${currentDomain})`);
 
     let indicator = null;
 
     // 创建一个视觉指示器
-    function createIndicator() {
+    function createIndicator(message, backgroundColor = 'yellow') {
         if (indicator) return;
         indicator = document.createElement('div');
-        indicator.textContent = '自动登录脚本正在运行';
+        indicator.textContent = message;
         indicator.style.position = 'fixed';
         indicator.style.top = '10px';
         indicator.style.right = '10px';
-        indicator.style.backgroundColor = 'yellow';
+        indicator.style.backgroundColor = backgroundColor;
         indicator.style.padding = '5px';
         indicator.style.borderRadius = '5px';
         indicator.style.zIndex = '9999';
@@ -83,12 +86,12 @@
 
         if (!username || !password) {
             console.log('用户名或密码未设置，请先设置');
-            removeIndicator();
+            createIndicator('请先设置用户名和密码', 'orange');
             return;
         }
 
         console.log('开始自动登录过程');
-        createIndicator();
+        createIndicator('自动登录脚本正在运行');
 
         waitForElement('input[name="username"]', (usernameInput) => {
             simulateUserInput(usernameInput, username);
@@ -128,16 +131,22 @@
         const newUsername = prompt('请输入用户名:', username);
         if (newUsername !== null) {
             username = newUsername;
-            GM_setValue('crawlab_username', username);
+            GM_setValue(`crawlab_username_${currentDomain}`, username);
         }
 
         const newPassword = prompt('请输入密码:', password);
         if (newPassword !== null) {
             password = newPassword;
-            GM_setValue('crawlab_password', password);
+            GM_setValue(`crawlab_password_${currentDomain}`, password);
         }
 
-        alert('用户名和密码已更新');
+        if (username && password) {
+            alert(`用户名和密码已更新 (域名: ${currentDomain})`);
+            removeIndicator();
+            autoLogin(); // 设置完成后尝试自动登录
+        } else {
+            createIndicator('用户名或密码未设置，请重新设置', 'orange');
+        }
     }
 
     // 注册菜单命令
