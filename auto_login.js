@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         Crawlab 自动登录
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.8
 // @description  自动登录 Crawlab
 // @match        *://crawlab.hk.com:5998/*
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
+// @license      GPL-2.0-only
 // ==/UserScript==
 
 (function() {
