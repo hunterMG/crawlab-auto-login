@@ -1,14 +1,17 @@
 // ==UserScript==
 // @name         Crawlab 自动登录
 // @namespace    http://tampermonkey.net/
-// @version      0.8
+// @version      0.8.1
 // @description  自动登录 Crawlab
-// @match        *://crawlab.hk.com:5998/*
+// @match        http://your-crawlab-address/#/login
 // @grant        GM_getValue
 // @grant        GM_setValue
 // @grant        GM_registerMenuCommand
 // @license      GPL-2.0-only
 // ==/UserScript==
+
+// 注意：请在 Tampermonkey 的脚本设置中的 "用户包含" / "User includes" 部分
+// 添加您的 Crawlab 地址的匹配规则，例如：*://your-crawlab-address:port/*
 
 (function() {
     'use strict';
